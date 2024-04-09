@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Event;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
@@ -11,7 +12,11 @@ class EventController extends Controller
 {
     public function index()
     {
-        $events = Event::all();
+        // Dobij trenutno ulogovanog korisnika
+        $user = Auth::user();
+
+        // Dobij sve događaje povezane sa trenutno ulogovanim korisnikom
+        $events = Event::where('user_id', $user->id)->get();
 
         return response()->json(['events' => $events]);
     }
@@ -31,14 +36,15 @@ class EventController extends Controller
             'start_datetime' => 'required|date',
             'end_datetime' => 'required|date|after:start_datetime',
             'event_type_id' => 'required|exists:event_types,id',
-            'user_id' => 'required|exists:users,id',
         ]);
 
         if ($validator->fails()) {
             throw ValidationException::withMessages($validator->errors()->toArray());
         }
 
-        $event = Event::create($request->all());
+        $user_id = Auth::id(); // Dobij ID trenutno ulogovanog korisnika
+
+        $event = Event::create(array_merge($request->all(), ['user_id' => $user_id]));
 
         return response()->json(['event' => $event], 201);
     }
@@ -53,14 +59,15 @@ class EventController extends Controller
             'start_datetime' => 'required|date',
             'end_datetime' => 'required|date|after:start_datetime',
             'event_type_id' => 'required|exists:event_types,id',
-            'user_id' => 'required|exists:users,id',
         ]);
 
         if ($validator->fails()) {
             throw ValidationException::withMessages($validator->errors()->toArray());
         }
 
-        $event->update($request->all());
+        $user_id = Auth::id(); // Dobij ID trenutno ulogovanog korisnika
+
+        $event->update(array_merge($request->all(), ['user_id' => $user_id]));
 
         return response()->json(['event' => $event]);
     }
