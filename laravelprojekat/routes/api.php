@@ -36,3 +36,11 @@ Route::delete('/events/{id}', [EventController::class, 'destroy']);
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+ 
+
+Route::middleware('auth:sanctum')->group(function () {
+     
+
+    // API ruta za izvoz događaja ulogovanog korisnika u .ics fajl
+    Route::get('/events/export', [EventController::class, 'exportToICS'])->name('events.export');
+});
