@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\EventCreatedMail;
 use Illuminate\Http\Request;
 use App\Models\Event;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
@@ -15,12 +18,26 @@ class EventController extends Controller
     {
         // Dobij trenutno ulogovanog korisnika
         $user = Auth::user();
-
-        // Dobij sve događaje povezane sa trenutno ulogovanim korisnikom
-        $events = Event::where('user_id', $user->id)->get();
-
+    
+        // Identifikacija tipova događaja na nivou katedre
+        $departmentEventTypes = ['Ispit', 'Sastanak', 'Nastava', 'Ostalo'];
+    
+        // Dobijanje događaja na nivou katedre kreiranih od strane drugih korisnika u istoj katedri
+        $departmentEvents = Event::whereIn('event_type_id', function ($query) use ($departmentEventTypes) {
+            $query->select('id')->from('event_types')->whereIn('name', $departmentEventTypes);
+        })->whereHas('user', function ($query) use ($user) {
+            $query->where('department_id', $user->department_id)->where('id', '!=', $user->id);
+        })->get();
+    
+        // Dobijanje događaja kreiranih od strane trenutno ulogovanog korisnika
+        $userEvents = Event::where('user_id', $user->id)->get();
+    
+        // Spajanje kolekcija događaja
+        $events = $userEvents->merge($departmentEvents);
+    
         return response()->json(['events' => $events]);
     }
+    
 
     public function show($id)
     {
@@ -46,7 +63,7 @@ class EventController extends Controller
         $user_id = Auth::id(); // Dobij ID trenutno ulogovanog korisnika
 
         $event = Event::create(array_merge($request->all(), ['user_id' => $user_id]));
-
+        $this->posaljiObavestenje($event);  //salje email sa obavestenjem svih ucesnika u dogadjajima
         return response()->json(['event' => $event], 201);
     }
 
@@ -89,8 +106,21 @@ class EventController extends Controller
         // Dobij trenutno ulogovanog korisnika
         $user = Auth::user();
 
-        // Dobij sve događaje povezane sa trenutno ulogovanim korisnikom
-        $events = Event::where('user_id', $user->id)->get();
+        // Identifikacija tipova događaja na nivou katedre
+        $departmentEventTypes = ['Ispit', 'Sastanak', 'Nastava', 'Ostalo'];
+
+        // Dobijanje događaja na nivou katedre kreiranih od strane drugih korisnika u istoj katedri
+        $departmentEvents = Event::whereIn('event_type_id', function ($query) use ($departmentEventTypes) {
+            $query->select('id')->from('event_types')->whereIn('name', $departmentEventTypes);
+        })->whereHas('user', function ($query) use ($user) {
+            $query->where('department_id', $user->department_id)->where('id', '!=', $user->id);
+        })->get();
+
+        // Dobijanje događaja kreiranih od strane trenutno ulogovanog korisnika
+        $userEvents = Event::where('user_id', $user->id)->get();
+
+        // Spajanje kolekcija događaja
+        $events = $userEvents->merge($departmentEvents);
 
         // Kreiramo prazan string za sadržaj .ics fajla
         $icsContent = "BEGIN:VCALENDAR\r\n";
@@ -123,5 +153,27 @@ class EventController extends Controller
         return response($icsContent)
             ->header('Content-Type', 'text/calendar')
             ->header('Content-Disposition', 'attachment; filename="events.ics"');
+    }
+
+
+    public function posaljiObavestenje($event)
+    {
+        // Dobijanje trenutno ulogovanog korisnika
+        $user = Auth::user();
+
+        // Slanje mejla korisniku koji je kreirao događaj
+        Mail::to($user->email)->send(new EventCreatedMail($event));
+
+        // Provera da li je događaj na nivou katedre
+        $eventTypes = ['Ispit', 'Sastanak', 'Nastava', 'Ostalo'];
+        if(in_array($event->eventType->name, $eventTypes)){
+            // Dobijanje svih korisnika iste katedre
+            $departmentUsers = User::where('department_id', $user->department_id)->where('id', '!=', $user->id)->get();
+
+            // Slanje mejla svim korisnicima katedre
+            foreach($departmentUsers as $departmentUser){
+                Mail::to($departmentUser->email)->send(new EventCreatedMail($event));
+            }
+        }
     }
 }
