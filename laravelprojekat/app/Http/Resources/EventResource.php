@@ -2,6 +2,8 @@
 
 namespace App\Http\Resources;
 
+use App\Models\EventType;
+use App\Models\User;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class EventResource extends JsonResource
@@ -20,8 +22,8 @@ class EventResource extends JsonResource
             'description' => $this->description,
             'start_datetime' => $this->start_datetime,
             'end_datetime' => $this->end_datetime,
-            'event_type_id' => $this->event_type_id,
-            'user_id' => $this->user(),
+            'event_type' => new EventTypeResource(EventType::find($this->event_type_id)),
+            'user' => new UserResource(User::find($this->user_id)),
            
         ];
     }

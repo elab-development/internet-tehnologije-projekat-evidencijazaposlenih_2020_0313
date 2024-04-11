@@ -18,6 +18,7 @@ class AuthController extends Controller
             'lastName' => 'required|string',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:6',
+            'department_id' => 'required|integer|exists:departments,id',
         ]);
 
         if ($validator->fails()) {
@@ -29,6 +30,7 @@ class AuthController extends Controller
             'lastName' => $request->lastName,
             'email' => $request->email,
             'password' => bcrypt($request->password),
+            'department_id' => $request->department_id,
         ]);
 
         $token = $user->createToken('auth_token')->plainTextToken;

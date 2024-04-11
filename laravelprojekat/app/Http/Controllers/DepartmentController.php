@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\DepartmentResource;
 use Illuminate\Http\Request;
 use App\Models\Department;
 use Illuminate\Support\Facades\Validator;
@@ -13,7 +14,7 @@ class DepartmentController extends Controller
     {
         $departments = Department::all();
 
-        return response()->json(['departments' => $departments]);
+        return response()->json(['departments' => DepartmentResource::collection($departments)]);
     }
 
     public function show($id)
@@ -44,7 +45,7 @@ class DepartmentController extends Controller
 
         $department = Department::create($request->all());
 
-        return response()->json(['department' => $department], 201);
+        return response()->json(['department' => new DepartmentResource($department)], 201);
     }
 
     public function update(Request $request, $id)
@@ -70,7 +71,7 @@ class DepartmentController extends Controller
 
         $department->update($request->all());
 
-        return response()->json(['department' => $department]);
+        return response()->json(['department' => new DepartmentResource($department)]);
     }
 
     public function destroy($id)

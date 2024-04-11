@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\EventResource;
 use App\Mail\EventCreatedMail;
 use Illuminate\Http\Request;
 use App\Models\Event;
@@ -9,8 +10,10 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Str;
 
 class EventController extends Controller
 {
@@ -35,7 +38,7 @@ class EventController extends Controller
         // Spajanje kolekcija događaja
         $events = $userEvents->merge($departmentEvents);
     
-        return response()->json(['events' => $events]);
+        return response()->json(['events' => EventResource::collection($events)]);
     }
     
 
@@ -64,7 +67,7 @@ class EventController extends Controller
 
         $event = Event::create(array_merge($request->all(), ['user_id' => $user_id]));
         $this->posaljiObavestenje($event);  //salje email sa obavestenjem svih ucesnika u dogadjajima
-        return response()->json(['event' => $event], 201);
+        return response()->json(['event' =>new EventResource($event)], 201);
     }
 
     public function update(Request $request, $id)
@@ -87,7 +90,7 @@ class EventController extends Controller
 
         $event->update(array_merge($request->all(), ['user_id' => $user_id]));
 
-        return response()->json(['event' => $event]);
+        return response()->json(['event' => new EventResource($event)]);
     }
 
     public function destroy($id)
@@ -148,6 +151,12 @@ class EventController extends Controller
 
         // Završavamo .ics fajl
         $icsContent .= "END:VCALENDAR";
+
+
+        // Čuvanje .ics fajla u skladištu aplikacije (npr. storage/app)
+        $filePath = 'events.ics';
+        Storage::put($filePath, $icsContent);
+
 
         // Postavljamo HTTP zaglavlje za preuzimanje .ics fajla
         return response($icsContent)

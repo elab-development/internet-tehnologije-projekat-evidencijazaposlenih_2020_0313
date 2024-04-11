@@ -37,17 +37,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/departments/{id}', [DepartmentController::class, 'update']);
     Route::delete('/departments/{id}', [DepartmentController::class, 'destroy']);
 
+
+      // API ruta za izvoz događaja ulogovanog korisnika u .ics fajl
+      Route::get('/events/export', [EventController::class, 'exportToICS'])->name('events.export');
+
     //DOGADJAJI
     Route::get('/events', [EventController::class, 'index']);
     Route::get('/events/{id}', [EventController::class, 'show']);
     Route::post('/events', [EventController::class, 'store']);
     Route::put('/events/{id}', [EventController::class, 'update']);
     Route::delete('/events/{id}', [EventController::class, 'destroy']);
-
-        // API ruta za izvoz događaja ulogovanog korisnika u .ics fajl
-        Route::get('/events/export', [EventController::class, 'exportToICS'])->name('events.export');
-
-
 
     //TIPOVI DOGADJAJA
     Route::get('/event-types', [EventTypeController::class, 'index']);

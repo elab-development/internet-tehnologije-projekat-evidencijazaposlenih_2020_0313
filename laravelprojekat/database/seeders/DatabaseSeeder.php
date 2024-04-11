@@ -19,6 +19,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+
+        // Seed event types
+        $eventTypes = ['Javni', 'Privatni', 'Ispit', 'Sastanak', 'Nastava', 'Ostalo'];
+        foreach ($eventTypes as $eventType) {
+            EventType::factory()->create(['name' => $eventType]);
+        }
+
+
         // Seed departments
         Department::factory()->count(10)->create()->each(function ($department) {
             // Seed users for each department
@@ -35,13 +43,9 @@ class DatabaseSeeder extends Seeder
 
         User::factory()->create([
             'firstName' => 'Sofija',
-            'lastName' => 'Kovacevic',
+            'lastName' => 'Kotur',
             'email' => 'sk20200313@student.fon.bg.ac.rs',
         ]);
-        // Seed event types
-        $eventTypes = ['Javni', 'Privatni', 'Ispit', 'Sastanak', 'Nastava', 'Ostalo'];
-        foreach ($eventTypes as $eventType) {
-            EventType::factory()->create(['name' => $eventType]);
-        }
+       
     }
 }

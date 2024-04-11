@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Department;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserResource extends JsonResource
@@ -21,9 +22,9 @@ class UserResource extends JsonResource
             'title' => $this->title,
             'biography' => $this->biography,
             'note' => $this->note,
-            'department_id' => $this->department(),
+            'department' => new DepartmentResource(Department::find($this->department_id)),
             'email' => $this->email,
-            // Add any other attributes you want to include in the response
+             
         ];
     }
 }
