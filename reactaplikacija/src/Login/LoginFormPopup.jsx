@@ -6,8 +6,7 @@ const LoginFormPopup = () => {
 
     const switchTab = (tab) => {
         setActiveTab(tab);
-    };
-
+    }; 
     return (
         <div> 
             <section>
