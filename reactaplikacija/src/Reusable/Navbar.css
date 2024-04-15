@@ -1,0 +1,19 @@
+.navbar {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding: 20px;
+    background-color: #f0f2f5;
+  }
+  
+  .navbar-item {
+    margin: 0 10px;
+    font-size: 18px;
+    color: #333;
+    text-decoration: none;
+  }
+  
+  .navbar-item:hover {
+    color: #2196f3;
+    cursor: pointer;
+  }
+  
