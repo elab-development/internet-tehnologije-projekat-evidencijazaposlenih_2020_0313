@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LoginFormPopup from './Login/LoginFormPopup';
 import './App.css';
@@ -7,7 +7,15 @@ import Navbar from './Reusable/Navbar';
 import Dogadjaji from './Dogadjaji/Dogadjaji';
 
 function App() {
-  const [token,setToken]=useState(null);
+  const [token, setToken] = useState(null);
+
+  useEffect(() => {
+    // Proveravamo da li postoji token u session storage-u prilikom prvog renderovanja komponente
+    const storedToken = sessionStorage.getItem('token');
+    if (storedToken) {
+      setToken(storedToken);
+    }
+  }, []); 
   return (
     <Router>
       <div>

@@ -1,6 +1,8 @@
 import React from 'react';
 import useDogadjaji from '../Reusable/useDogadjaji';
+ 
 import './Dogadjaji.css';
+import Event from './Event';
 
 const Dogadjaji = () => {
   const [dogadjaji] = useDogadjaji();
@@ -49,9 +51,7 @@ const Dogadjaji = () => {
                 return (
                   <td key={index}>
                     {filteredEvents.map((event) => (
-                      <div key={event.id}>
-                        {`${formatVreme(event.start_datetime)} - ${formatVreme(event.end_datetime)}: ${event.title}`}
-                      </div>
+                      <Event key={event.id} event={event} formatTime={formatVreme} />
                     ))}
                   </td>
                 );
