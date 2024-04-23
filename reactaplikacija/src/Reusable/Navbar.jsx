@@ -24,7 +24,14 @@ function Navbar({ token, setToken }) {
     <nav className="navbar">
       <Link to="/" className="navbar-item">Pocetna</Link>
       {token ? (
-        <button onClick={handleLogout} className="navbar-item">Logout</button>
+        <>
+        <Link to="/dogadjaji" className="navbar-item">Moj raspored</Link>
+        <Link to="/calendar" className="navbar-item">Kalendar</Link>
+
+
+           <button onClick={handleLogout} className="navbar-item">Logout</button>
+        </>
+       
       ) : (
         <Link to="/loginregister" className="navbar-item">Prijava</Link>
       )}
