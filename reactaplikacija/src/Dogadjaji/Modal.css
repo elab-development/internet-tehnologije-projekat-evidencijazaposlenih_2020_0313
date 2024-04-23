@@ -1,0 +1,54 @@
+.modal2 {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding: 20px;
+    background-color: #f0f2f5;
+    border: 2px solid #c8d6e5;
+    border-radius: 10px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50%;
+    z-index: 1000; /* Ensure the modal sits on top of other elements */
+  }
+  
+  .modal-content2 {
+    margin-top: 30px;
+  }
+  
+  .modal-content2 form {
+    margin-bottom: 40px;
+  }
+  
+  .modal-content2 input[type="text"],
+  .modal-content2 input[type="datetime-local"],
+  .modal-content2 select {
+    font-size: 16px;
+    color: #333;
+    padding: 10px;
+    margin-bottom: 20px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .modal-content2 button[type="submit"] {
+    font-size: 18px;
+    color: #fff;
+    background-color: #2196f3;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+  }
+  
+  .modal-close-btn {
+    font-size: 24px;
+    color: #666;
+    background: none;
+    border: none;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+  }
+  

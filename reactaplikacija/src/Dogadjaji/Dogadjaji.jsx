@@ -5,12 +5,13 @@ import './Dogadjaji.css';
 import Event from './Event';
 import { BsPencilSquare, BsTrash, BsPlus } from 'react-icons/bs'; 
 import axios from 'axios';
+import ModalEvent from './ModalEvent';
 
 const Dogadjaji = () => {
   const [dogadjaji, setDogadjaji] = useDogadjaji();
   const [eventTypes] = useEventTypes();  
   const [selectedEventType, setSelectedEventType] = useState(null);
-
+  const [showModal, setShowModal] = useState(false);
   const formatVreme = (time) => {
     const date = new Date(time);
     return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
@@ -79,8 +80,37 @@ const Dogadjaji = () => {
       console.error('Došlo je do greške prilikom slanja DELETE zahteva:', error);
     }
   };
+  const handleAddEvent = async (newEvent) => {
+    try {
+      // Dobavljanje tokena iz sessionStorage-a
+      const token = sessionStorage.getItem('token');
+      if (!token) {
+        console.error('Nije pronađen token u sessionStorage-u.');
+        return;
+      }
 
-  return (
+      // Slanje POST zahteva za dodavanje novog događaja
+      const response = await axios.post('http://127.0.0.1:8000/api/events', newEvent, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // Provera odgovora
+      if (response.status === 201) {
+        console.log('Novi događaj je uspešno dodat.');
+        // Ažuriranje stanja u lokalnoj memoriji
+        setDogadjaji([...dogadjaji, response.data.event]);
+        // Zatvaranje modala
+        setShowModal(false);
+      } else {
+        console.error('Došlo je do greške prilikom dodavanja novog događaja.');
+      }
+    } catch (error) {
+      console.error('Došlo je do greške prilikom slanja POST zahteva:', error);
+    }
+  };
+  return (<>
     <div className="calendar">
       <div className="navigation">
         <button onClick={showPreviousWeek}>Prethodnih 7 dana</button>
@@ -93,6 +123,7 @@ const Dogadjaji = () => {
             </option>
           ))}
         </select>
+        <button onClick={() => setShowModal(true)}><BsPlus /> Dodaj događaj</button>
       </div>
       <table>
         <thead>
@@ -139,7 +170,10 @@ const Dogadjaji = () => {
           ))}
         </tbody>
       </table>
+      {showModal && <ModalEvent onSubmit={handleAddEvent} eventTypes={eventTypes}  setShowModal={setShowModal}/>}
     </div>
+    
+     </>
   );
 };
 
