@@ -31,4 +31,18 @@
   .calendar td div {
     margin-bottom: 5px;
   }
+ 
+.eventOptions {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    gap: 8px;
+    color:red;
+  }
+  
+  .eventOptions span {
+    cursor: pointer;
+  }
   
