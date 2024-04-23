@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
 import useDogadjaji from '../Reusable/useDogadjaji';
- 
 import './Dogadjaji.css';
 import Event from './Event';
 
@@ -14,21 +13,41 @@ const Dogadjaji = () => {
   };
 
   // Funkcija za generisanje niza datuma za narednih 7 dana
-  const generateDates = () => {
-    const currentDate = new Date();
+  const generateDates = (start) => {
     const dates = [];
     for (let i = 0; i < 7; i++) {
-      const date = new Date(currentDate);
-      date.setDate(currentDate.getDate() + i);
+      const date = new Date(start);
+      date.setDate(start.getDate() + i);
       dates.push(date);
     }
     return dates;
   };
 
-  const dates = generateDates();
+  // Trenutno prikazanih 7 dana
+  const [currentDate, setCurrentDate] = useState(new Date());
+
+  // Funkcija za prikaz prethodnih 7 dana
+  const showPreviousWeek = () => {
+    const newDate = new Date(currentDate);
+    newDate.setDate(currentDate.getDate() - 7);
+    setCurrentDate(newDate);
+  };
+
+  // Funkcija za prikaz sledećih 7 dana
+  const showNextWeek = () => {
+    const newDate = new Date(currentDate);
+    newDate.setDate(currentDate.getDate() + 7);
+    setCurrentDate(newDate);
+  };
+
+  const dates = generateDates(currentDate);
 
   return (
     <div className="calendar">
+      <div className="navigation">
+        <button onClick={showPreviousWeek}>Prethodnih 7 dana</button>
+        <button onClick={showNextWeek}>Sledećih 7 dana</button>
+      </div>
       <table>
         <thead>
           <tr>
