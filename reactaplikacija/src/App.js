@@ -4,6 +4,7 @@ import LoginFormPopup from './Login/LoginFormPopup';
 import './App.css';
 import HomePage from './Home/HomePage';
 import Navbar from './Reusable/Navbar';
+import Dogadjaji from './Dogadjaji/Dogadjaji';
 
 function App() {
   const [token,setToken]=useState(null);
@@ -13,6 +14,8 @@ function App() {
         <Navbar token={token} setToken={setToken}></Navbar>
         <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/dogadjaji" element={<Dogadjaji />} />
+
           <Route path="/loginregister" element={<LoginFormPopup setToken={setToken} />} />
         </Routes>
       </div>
