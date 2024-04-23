@@ -44,7 +44,7 @@ const Calendar = () => {
   };
 
   const getEventForDay = (day) => {
-    const event = importantDates.find((date) => parseInt(date.date.iso.split('-')[2]) === day);
+    const event = importantDates.find((date) => parseInt(date.date.iso.split('-')[2]) === day);//22-05-2024
     return event ? event.name : '';
   };
   

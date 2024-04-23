@@ -30,7 +30,7 @@ const LoginFormPopup = ({setToken}) => {
             navigate('/dogadjaji')
         } catch (error) {
             console.error('Error logging in:', error);
-            // Dodaj logiku za obradu greške pri logovanju
+            alert("GRESKA PRILIKOM REGISTRACIJE");
         }
     };
 
@@ -52,7 +52,7 @@ const LoginFormPopup = ({setToken}) => {
             navigate('/dogadjaji')
         } catch (error) {
             console.error('Error registering:', error);
-            // Dodaj logiku za obradu greške pri registraciji
+           alert("GRESKA PRILIKOM REGISTRACIJE");
         }
     };
 

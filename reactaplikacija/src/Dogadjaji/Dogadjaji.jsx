@@ -104,6 +104,7 @@ const Dogadjaji = () => {
           updatedDogadjaji[updatedEventIndex] = response.data.event;
           setDogadjaji(updatedDogadjaji);
           setShowModal(false);
+          setSelectedEvent(null);
         } else {
           console.error('Došlo je do greške prilikom ažuriranja događaja.');
         }
@@ -128,7 +129,10 @@ const Dogadjaji = () => {
     }
   };
   
-
+  function zatvoriModal(  ){
+    setShowModal(false);
+    setSelectedEvent(null);
+  }
   return (
     <>
       <div className="calendar">
@@ -196,6 +200,7 @@ const Dogadjaji = () => {
             eventTypes={eventTypes}
             selectedEvent={selectedEvent} 
             setShowModal={setShowModal}
+            onclose={zatvoriModal}
           />
         )}
       </div>

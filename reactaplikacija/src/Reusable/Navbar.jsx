@@ -14,6 +14,7 @@ function Navbar({ token, setToken }) {
       });
      
       setToken(null);
+      sessionStorage.clear();
       history('/loginregister');
     } catch (error) {
       console.error('Error logging out:', error);

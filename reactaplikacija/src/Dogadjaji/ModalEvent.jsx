@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import './Modal.css';
 
-const ModalEvent = ({ onSubmit, eventTypes, selectedEvent, setShowModal }) => {
+const ModalEvent = ({ onSubmit, eventTypes, selectedEvent, setShowModal  ,onclose}) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [start_datetime, setStartDateTime] = useState('');
@@ -23,7 +23,10 @@ const ModalEvent = ({ onSubmit, eventTypes, selectedEvent, setShowModal }) => {
     e.preventDefault();
     onSubmit({ title, description, start_datetime, end_datetime, event_type_id });
   };
- 
+  const zatvoriModal = ( ) => {
+    setShowModal(false);
+    onclose();
+  };
   return (
     <div className="modal2">
       <div className="modal-content2">
@@ -42,7 +45,7 @@ const ModalEvent = ({ onSubmit, eventTypes, selectedEvent, setShowModal }) => {
           </select>
           <button type="submit">Dodaj/Izmeni događaj</button>
         </form>
-        <button className="modal-close-btn" onClick={() => setShowModal(false)}>X</button>
+        <button className="modal-close-btn" onClick={zatvoriModal }>X</button>
       </div>
     </div>
   );
