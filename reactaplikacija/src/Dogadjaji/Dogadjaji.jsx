@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import useDogadjaji from '../Reusable/useDogadjaji';
 import useEventTypes from '../Reusable/useEventTypes';   
@@ -12,6 +13,8 @@ const Dogadjaji = () => {
   const [eventTypes] = useEventTypes();  
   const [selectedEventType, setSelectedEventType] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null); 
+
   const formatVreme = (time) => {
     const date = new Date(time);
     return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
@@ -48,30 +51,27 @@ const Dogadjaji = () => {
     : dogadjaji;
 
   const handleEditEvent = (eventId) => {
-    // Implementacija za izmenu događaja
-    console.log(`Izmena događaja sa ID: ${eventId}`);
+    const event = dogadjaji.find((event) => event.id === eventId);
+    setSelectedEvent(event);
+    setShowModal(true);
   };
 
   const handleDeleteEvent = async (eventId) => {
     try {
-      // Dobavljanje tokena iz sessionStorage-a
       const token = sessionStorage.getItem('token');
       if (!token) {
         console.error('Nije pronađen token u sessionStorage-u.');
         return;
       }
 
-      // Slanje DELETE zahteva
       const response = await axios.delete(`http://127.0.0.1:8000/api/events/${eventId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      // Provera odgovora
       if (response.status === 200) {
         console.log('Događaj je uspešno obrisan.');
-        // Ažuriranje stanja u lokalnoj memoriji
         setDogadjaji(dogadjaji.filter(event => event.id !== eventId));
       } else {
         console.error('Došlo je do greške prilikom brisanja događaja.');
@@ -80,100 +80,126 @@ const Dogadjaji = () => {
       console.error('Došlo je do greške prilikom slanja DELETE zahteva:', error);
     }
   };
+
   const handleAddEvent = async (newEvent) => {
     try {
-      // Dobavljanje tokena iz sessionStorage-a
       const token = sessionStorage.getItem('token');
       if (!token) {
         console.error('Nije pronađen token u sessionStorage-u.');
         return;
       }
-
-      // Slanje POST zahteva za dodavanje novog događaja
-      const response = await axios.post('http://127.0.0.1:8000/api/events', newEvent, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      // Provera odgovora
-      if (response.status === 201) {
-        console.log('Novi događaj je uspešno dodat.');
-        // Ažuriranje stanja u lokalnoj memoriji
-        setDogadjaji([...dogadjaji, response.data.event]);
-        // Zatvaranje modala
-        setShowModal(false);
+  
+      if (selectedEvent) {
+        // Ažuriranje postojećeg događaja
+        const response = await axios.put(`http://127.0.0.1:8000/api/events/${selectedEvent.id}`, newEvent, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+  
+        if (response.status === 200) {
+          console.log('Događaj je uspešno ažuriran.');
+          const updatedEventIndex = dogadjaji.findIndex(event => event.id === selectedEvent.id);
+          const updatedDogadjaji = [...dogadjaji];
+          updatedDogadjaji[updatedEventIndex] = response.data.event;
+          setDogadjaji(updatedDogadjaji);
+          setShowModal(false);
+        } else {
+          console.error('Došlo je do greške prilikom ažuriranja događaja.');
+        }
       } else {
-        console.error('Došlo je do greške prilikom dodavanja novog događaja.');
+        // Dodavanje novog događaja
+        const response = await axios.post('http://127.0.0.1:8000/api/events', newEvent, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+  
+        if (response.status === 201) {
+          console.log('Novi događaj je uspešno dodat.');
+          setDogadjaji([...dogadjaji, response.data.event]);
+          setShowModal(false);
+        } else {
+          console.error('Došlo je do greške prilikom dodavanja novog događaja.');
+        }
       }
     } catch (error) {
-      console.error('Došlo je do greške prilikom slanja POST zahteva:', error);
+      console.error('Došlo je do greške prilikom slanja POST/PUT zahteva:', error);
     }
   };
-  return (<>
-    <div className="calendar">
-      <div className="navigation">
-        <button onClick={showPreviousWeek}>Prethodnih 7 dana</button>
-        <button onClick={showNextWeek}>Sledećih 7 dana</button>
-        <select onChange={(e) => setSelectedEventType(parseInt(e.target.value))}>
-          <option value={null}>Svi tipovi</option>
-          {eventTypes.map((eventType) => (
-            <option key={eventType.id} value={eventType.id}>
-              {eventType.name}
-            </option>
-          ))}
-        </select>
-        <button onClick={() => setShowModal(true)}><BsPlus /> Dodaj događaj</button>
-      </div>
-      <table>
-        <thead>
-          <tr>
-            <th>Vreme</th>
-            {dates.map((date, index) => (
-              <th key={index}>{date.toLocaleDateString()}</th>
+  
+
+  return (
+    <>
+      <div className="calendar">
+        <div className="navigation">
+          <button onClick={showPreviousWeek}>Prethodnih 7 dana</button>
+          <button onClick={showNextWeek}>Sledećih 7 dana</button>
+          <select onChange={(e) => setSelectedEventType(parseInt(e.target.value))}>
+            <option value={null}>Svi tipovi</option>
+            {eventTypes.map((eventType) => (
+              <option key={eventType.id} value={eventType.id}>
+                {eventType.name}
+              </option>
             ))}
-          </tr>
-        </thead>
-        <tbody>
-          {[...Array(24)].map((_, hour) => (
-            <tr key={hour}>
-              <td>{`${hour.toString().padStart(2, '0')}:00`}</td>
-              {dates.map((date, index) => {
-                const filteredHourlyEvents = filteredEvents.filter(
-                  (event) =>
-                    new Date(event.start_datetime).toLocaleDateString() === date.toLocaleDateString() &&
-                    new Date(event.start_datetime).getHours() === hour
-                );
-                return (
-                  <td key={index}>
-                    {filteredHourlyEvents.length > 0 ? (
-                      <div>
-                        {filteredHourlyEvents.map((event) => (
-                          <div key={event.id}>
-                            <Event event={event} formatTime={formatVreme} />
-                            <button onClick={() => handleEditEvent(event.id)}>
-                              <BsPencilSquare />
-                            </button>
-                            <button onClick={() => handleDeleteEvent(event.id)}>
-                              <BsTrash />
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                       <></>
-                    )}
-                  </td>
-                );
-              })}
+          </select>
+          <button onClick={() => setShowModal(true)}><BsPlus /> Dodaj događaj</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Vreme</th>
+              {dates.map((date, index) => (
+                <th key={index}>{date.toLocaleDateString()}</th>
+              ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
-      {showModal && <ModalEvent onSubmit={handleAddEvent} eventTypes={eventTypes}  setShowModal={setShowModal}/>}
-    </div>
-    
-     </>
+          </thead>
+          <tbody>
+            {[...Array(24)].map((_, hour) => (
+              <tr key={hour}>
+                <td>{`${hour.toString().padStart(2, '0')}:00`}</td>
+                {dates.map((date, index) => {
+                  const filteredHourlyEvents = filteredEvents.filter(
+                    (event) =>
+                      new Date(event.start_datetime).toLocaleDateString() === date.toLocaleDateString() &&
+                      new Date(event.start_datetime).getHours() === hour
+                  );
+                  return (
+                    <td key={index}>
+                      {filteredHourlyEvents.length > 0 ? (
+                        <div>
+                          {filteredHourlyEvents.map((event) => (
+                            <div key={event.id}>
+                              <Event event={event} formatTime={formatVreme} />
+                              <button onClick={() => handleEditEvent(event.id)}>
+                                <BsPencilSquare />
+                              </button>
+                              <button onClick={() => handleDeleteEvent(event.id)}>
+                                <BsTrash />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                         <></>
+                      )}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        {showModal && (
+          <ModalEvent
+            onSubmit={handleAddEvent}
+            eventTypes={eventTypes}
+            selectedEvent={selectedEvent} 
+            setShowModal={setShowModal}
+          />
+        )}
+      </div>
+    </>
   );
 };
 

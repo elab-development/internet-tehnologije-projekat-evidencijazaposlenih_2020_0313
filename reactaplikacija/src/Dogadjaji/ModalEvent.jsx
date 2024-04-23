@@ -1,11 +1,23 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import './Modal.css';
-const ModalEvent = ({ onSubmit, eventTypes,setShowModal }) => {
+
+const ModalEvent = ({ onSubmit, eventTypes, selectedEvent, setShowModal }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [start_datetime, setStartDateTime] = useState('');
   const [end_datetime, setEndDateTime] = useState('');
   const [event_type_id, setEventTypeId] = useState('');
+
+  useEffect(() => {
+    if (selectedEvent) {
+      setTitle(selectedEvent.title);
+      setDescription(selectedEvent.description);
+      setStartDateTime(selectedEvent.start_datetime);
+      setEndDateTime(selectedEvent.end_datetime);
+      setEventTypeId(selectedEvent.event_type.id);
+    }
+  }, [selectedEvent]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -14,7 +26,7 @@ const ModalEvent = ({ onSubmit, eventTypes,setShowModal }) => {
  
   return (
     <div className="modal2">
-        <div className="modal-content2">
+      <div className="modal-content2">
         <form onSubmit={handleSubmit}>
           <input type="text" placeholder="Naslov" value={title} onChange={(e) => setTitle(e.target.value)} />
           <input type="text" placeholder="Opis" value={description} onChange={(e) => setDescription(e.target.value)} />
@@ -28,13 +40,12 @@ const ModalEvent = ({ onSubmit, eventTypes,setShowModal }) => {
               </option>
             ))}
           </select>
-          <button type="submit">Dodaj događaj</button>
+          <button type="submit">Dodaj/Izmeni događaj</button>
         </form>
         <button className="modal-close-btn" onClick={() => setShowModal(false)}>X</button>
-     
-    </div></div>
+      </div>
+    </div>
   );
-  
 };
 
 export default ModalEvent;
