@@ -6,6 +6,8 @@ use App\Http\Controllers\EventTypeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\StatistikaController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -55,7 +57,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/event-types', [EventTypeController::class, 'store']);
     Route::put('/event-types/{id}', [EventTypeController::class, 'update']);
     Route::delete('/event-types/{id}', [EventTypeController::class, 'destroy']);
-    
+
     Route::delete('/employees/{id}', [AuthController::class, 'deleteEmployee']);
+
+
+    //STATISTIKA
+    Route::get('/statistics', [StatistikaController::class, 'statistics']);
    
 });
