@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './LoginFormPopup.css';  
 import { useNavigate } from 'react-router-dom';
@@ -11,7 +11,21 @@ const LoginFormPopup = ({setToken}) => {
     const [email, setEmail] = useState('nm20190015@student.fon.bg.ac.rs');
     const [password, setPassword] = useState('password');
     const [confirmPassword, setConfirmPassword] = useState('password');
-    const [departmentId, setDepartmentId] = useState('1');
+    const [departmentId, setDepartmentId] = useState('');
+    const [departments, setDepartments] = useState([]);
+
+    useEffect(() => {
+        const fetchDepartments = async () => {
+            try {
+                const response = await axios.get('http://127.0.0.1:8000/api/departments');
+                setDepartments(response.data.departments);
+            } catch (error) {
+                console.error('Error fetching departments:', error);
+            }
+        };
+
+        fetchDepartments();
+    }, []);
 
     const switchTab = (tab) => {
         setActiveTab(tab);
@@ -57,7 +71,7 @@ const LoginFormPopup = ({setToken}) => {
             navigate('/dogadjaji')
         } catch (error) {
             console.error('Error registering:', error);
-           alert("GRESKA PRILIKOM REGISTRACIJE");
+            alert("GRESKA PRILIKOM REGISTRACIJE");
         }
     };
 
@@ -96,7 +110,12 @@ const LoginFormPopup = ({setToken}) => {
                                             <input type="email" placeholder="Email" required value={email} onChange={(e) => setEmail(e.target.value)}/>
                                             <input type="password" placeholder="Password" required value={password} onChange={(e) => setPassword(e.target.value)}/>
                                             <input type="password" placeholder="Confirm password" required value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}/>
-                                            <input type="text" placeholder="Department ID" required value={departmentId} onChange={(e) => setDepartmentId(e.target.value)}/>
+                                            <select value={departmentId} onChange={(e) => setDepartmentId(e.target.value)}>
+                                                <option value="">Select Department</option>
+                                                {departments.map((department) => (
+                                                    <option key={department.id} value={department.id}>{department.name}</option>
+                                                ))}
+                                            </select>
                                             <input type="submit" value="Sign Up"/>
                                         </form>
                                     </div>

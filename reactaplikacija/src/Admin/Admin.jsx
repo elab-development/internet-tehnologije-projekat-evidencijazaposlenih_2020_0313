@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-
+import './Admin.css';
 const Admin = () => {
   const [departments, setDepartments] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -47,7 +47,7 @@ const Admin = () => {
   };
 
   return (
-    <div>
+    <div className="admin">
       <h2>Admin Panel - Pregled Departmana</h2>
       <input
         type="text"
@@ -96,6 +96,7 @@ const Admin = () => {
       </table>
     </div>
   );
+  
 };
 
 export default Admin;
