@@ -39,6 +39,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Nova ruta za dohvat zaposlenih korisnika
     Route::get('employees', [AuthController::class, 'getEmployees']);
+    Route::delete('/employees/{id}', [AuthController::class, 'deleteEmployee']);
+
+
     //KATEDRE
     Route::post('/departments', [DepartmentController::class, 'store']);
     Route::put('/departments/{id}', [DepartmentController::class, 'update']);
@@ -62,7 +65,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/event-types/{id}', [EventTypeController::class, 'update']);
     Route::delete('/event-types/{id}', [EventTypeController::class, 'destroy']);
 
-    Route::delete('/employees/{id}', [AuthController::class, 'deleteEmployee']);
+
 
 
     //STATISTIKA

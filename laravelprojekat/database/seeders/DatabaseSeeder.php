@@ -39,6 +39,7 @@ class DatabaseSeeder extends Seeder
             'firstName' => 'Nina',
             'lastName' => 'Maricic',
             'email' => 'nm20190015@student.fon.bg.ac.rs',
+            'admin'=>1
         ]);
 
         User::factory()->create([

@@ -177,7 +177,7 @@ const Dogadjaji = () => {
 
       const response = await axios.post('http://127.0.0.1:8000/api/pristustvo', {
         event_id: eventId,
-        napomena: '', // Možete dodati opcioni komentar za prisustvo ako je potrebno
+        napomena: '', 
       }, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -185,13 +185,13 @@ const Dogadjaji = () => {
       });
 
       if (response.status === 201) {
-        console.log('Prisustvo je uspešno evidentirano.');
+        alert('Prisustvo je uspešno evidentirano.');
         // Možete ažurirati stanje aplikacije kako biste oznacili događaj kao prisustvovan
       } else {
-        console.error('Došlo je do greške prilikom evidentiranja prisustva.');
+        alert('Došlo je do greške prilikom evidentiranja prisustva.');
       }
     } catch (error) {
-      console.error('Došlo je do greške prilikom slanja POST zahteva za evidentiranje prisustva:', error);
+      alert('Došlo je do greške prilikom slanja POST zahteva za evidentiranje prisustva:', error);
     }
   };
 

@@ -41,6 +41,7 @@ const LoginFormPopup = ({setToken}) => {
             console.log('Login response:', response.data);
             setToken(response.data.token)
             sessionStorage.setItem("token",response.data.token)
+            sessionStorage.setItem("admin",response.data.user.admin)
             if(response.data.user.admin==0){
                 navigate('/dogadjaji')
             }else{
@@ -68,6 +69,8 @@ const LoginFormPopup = ({setToken}) => {
             console.log('Login response:', response.data);
             setToken(response.data.token)
             sessionStorage.setItem("token",response.data.token)
+          
+
             navigate('/dogadjaji')
         } catch (error) {
             console.error('Error registering:', error);
