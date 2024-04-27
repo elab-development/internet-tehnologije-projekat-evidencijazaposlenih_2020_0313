@@ -6,6 +6,7 @@ use App\Http\Controllers\EventTypeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\PrisustvoController;
 use App\Http\Controllers\StatistikaController;
 
 /*
@@ -33,6 +34,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
  
 
 Route::middleware('auth:sanctum')->group(function () {
+    //NOVA RUTA ZA EVIDENCIJU PRISUSTVA
+    Route::post('/pristustvo', [PrisustvoController::class, 'store']);
+
     // Nova ruta za dohvat zaposlenih korisnika
     Route::get('employees', [AuthController::class, 'getEmployees']);
     //KATEDRE
