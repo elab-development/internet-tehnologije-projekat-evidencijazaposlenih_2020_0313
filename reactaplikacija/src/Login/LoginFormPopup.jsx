@@ -27,7 +27,12 @@ const LoginFormPopup = ({setToken}) => {
             console.log('Login response:', response.data);
             setToken(response.data.token)
             sessionStorage.setItem("token",response.data.token)
-            navigate('/dogadjaji')
+            if(response.data.user.admin==0){
+                navigate('/dogadjaji')
+            }else{
+                navigate('/admin')
+            }
+          
         } catch (error) {
             console.error('Error logging in:', error);
             alert("GRESKA PRILIKOM REGISTRACIJE");

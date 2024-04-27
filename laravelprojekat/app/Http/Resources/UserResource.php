@@ -24,7 +24,7 @@ class UserResource extends JsonResource
             'note' => $this->note,
             'department' => new DepartmentResource(Department::find($this->department_id)),
             'email' => $this->email,
-             
+            'admin' => $this->admin,
         ];
     }
 }

@@ -6,6 +6,7 @@ import HomePage from './Home/HomePage';
 import Navbar from './Reusable/Navbar';
 import Dogadjaji from './Dogadjaji/Dogadjaji';
 import Calendar from './Kalendar/Calendar';
+import Admin from './Admin/Admin';
 
 function App() {
   const [token, setToken] = useState(null);
@@ -24,9 +25,10 @@ function App() {
         <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/calendar" element={<Calendar />} />
-        <Route path="/dogadjaji" element={<Dogadjaji />} />
+        <Route path="/dogadjaji" element={<Dogadjaji />} />    {/*dodato eksportovanje u ics fajl */}
 
           <Route path="/loginregister" element={<LoginFormPopup setToken={setToken} />} />
+          <Route path="/admin" element={<Admin />} /> 
         </Routes>
       </div>
     </Router>
