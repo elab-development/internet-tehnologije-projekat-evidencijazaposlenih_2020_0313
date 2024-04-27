@@ -8,6 +8,7 @@ import Dogadjaji from './Dogadjaji/Dogadjaji';
 import Calendar from './Kalendar/Calendar';
 import Admin from './Admin/Admin';
 import AdminKorisnici from './Admin/AdminKorisnici';
+import StatisticsDashboard from './Admin/StatisticsDashboard';
 
 function App() {
   const [token, setToken] = useState(null);
@@ -29,6 +30,8 @@ function App() {
         <Route path="/dogadjaji" element={<Dogadjaji />} />    {/*dodato eksportovanje u ics fajl */}
 
           <Route path="/loginregister" element={<LoginFormPopup setToken={setToken} />} />
+          <Route path="/admin/statistike" element={<StatisticsDashboard />} /> 
+
           <Route path="/admin/korisnici" element={<AdminKorisnici />} /> 
           <Route path="/admin" element={<Admin />} /> 
         </Routes>

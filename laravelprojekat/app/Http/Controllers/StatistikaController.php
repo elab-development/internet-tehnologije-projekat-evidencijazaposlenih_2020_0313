@@ -28,24 +28,13 @@ class StatistikaController extends Controller
     
         // Broj korisnika koji su trenutno prijavljeni (ovo zavisi od implementacije)
     
-        // Broj događaja po tipu događaja
-        $eventsPerType = Event::select('event_type_id')->withCount('id')->get();
-    
-        // Prosečan broj događaja po korisniku
-        $averageEventsPerUser = Event::count() / User::count();
-    
+      
         // Broj novih korisnika po periodu (npr. mesečno)
         $newUsersPerMonth = User::whereYear('created_at', now()->year)
                                 ->whereMonth('created_at', now()->month)
                                 ->count();
     
-        // Broj zahteva po korisniku (uključujući i odgovore)
-        $requestsPerUser = Request::where('status', '!=', 'draft')
-                                    ->select('user_id')
-                                    ->withCount('id')
-                                    ->groupBy('user_id')
-                                    ->get();
-    
+      
        
     
         return response()->json([
@@ -54,10 +43,9 @@ class StatistikaController extends Controller
             'total_employees' => $totalEmployees,
             'total_admins' => $totalAdmins,
             'average_employees_per_department' => $averageEmployeesPerDepartment,
-            'events_per_type' => $eventsPerType,
-            'average_events_per_user' => $averageEventsPerUser,
+           
             'new_users_per_month' => $newUsersPerMonth,
-            'requests_per_user' => $requestsPerUser,
+           
            
         ]);
     }
