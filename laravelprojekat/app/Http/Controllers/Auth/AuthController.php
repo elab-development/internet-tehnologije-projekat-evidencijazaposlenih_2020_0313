@@ -64,4 +64,23 @@ class AuthController extends Controller
 
         return response()->json(['message' => 'Logged out successfully']);
     }
+
+    public function getEmployees()
+    {
+        // Koristimo User model za dohvat svih korisnika gdje je admin == 0
+        $employees = User::where('admin', 0)->get();
+
+        // Vraćamo listu zaposlenih korisnika kao JSON odgovor
+        return response()->json(['employees' => UserResource::collection($employees)]);
+    }
+    public function deleteEmployee($id)
+    {
+        $employee = User::findOrFail($id);
+        
+        if ($employee->delete()) {
+            return response()->json(['message' => 'Employee deleted successfully']);
+        } else {
+            return response()->json(['error' => 'Failed to delete employee'], 500);
+        }
+    }
 }

@@ -1,0 +1,50 @@
+.admin-container {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 3% 10%;
+  }
+  
+  .admin-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .admin-table th,
+  .admin-table td {
+    border: 1px solid #ccc;
+    padding: 8px;
+  }
+  
+  .admin-table th {
+    background-color: #f2f2f2;
+  }
+  
+  .admin-table th:first-child,
+  .admin-table td:first-child {
+    text-align: left;
+    width: 100px;
+  }
+  
+  .admin-table td div {
+    margin-bottom: 5px;
+  }
+  
+  .admin-search {
+    padding: 8px;
+    margin-bottom: 10px;
+  }
+  
+  .admin-delete-btn {
+    margin-right: 10px;
+    padding: 8px 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .admin-delete-btn:hover {
+    background-color: #45a049;
+  }
+  
