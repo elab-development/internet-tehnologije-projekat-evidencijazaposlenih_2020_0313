@@ -133,9 +133,45 @@ const Dogadjaji = () => {
     setShowModal(false);
     setSelectedEvent(null);
   }
+  const exportEvents = async () => {
+    try {
+      const token = sessionStorage.getItem('token');
+      if (!token) {
+        console.error('Nije pronađen token u sessionStorage-u.');
+        return;
+      }
+  
+      const response = await axios.get('http://127.0.0.1:8000/api/events/export', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        responseType: 'blob', // Postavljamo tip odgovora na binarni podatak (blob)
+      });
+  
+      // Kreiramo URL za preuzimanje .ics fajla
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      
+      // Kreiramo link za preuzimanje .ics fajla
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'events.ics');
+      
+      // Dodajemo link u DOM i simuliramo klik na njega
+      document.body.appendChild(link);
+      link.click();
+  
+      // Uklanjamo link iz DOM-a
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Došlo je do greške prilikom izvoza događaja:', error);
+    }
+  };
+  
   return (
     <>
       <div className="calendar">
+      <button onClick={exportEvents}>Izvezi događaje u .ics fajl</button>
+
         <div className="navigation">
           <button onClick={showPreviousWeek}>Prethodnih 7 dana</button>
           <button onClick={showNextWeek}>Sledećih 7 dana</button>
