@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import useDogadjaji from '../Reusable/useDogadjaji';
 import useEventTypes from '../Reusable/useEventTypes';   
@@ -88,7 +87,7 @@ const Dogadjaji = () => {
         console.error('Nije pronađen token u sessionStorage-u.');
         return;
       }
-  
+
       if (selectedEvent) {
         // Ažuriranje postojećeg događaja
         const response = await axios.put(`http://127.0.0.1:8000/api/events/${selectedEvent.id}`, newEvent, {
@@ -96,7 +95,7 @@ const Dogadjaji = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-  
+
         if (response.status === 200) {
           console.log('Događaj je uspešno ažuriran.');
           const updatedEventIndex = dogadjaji.findIndex(event => event.id === selectedEvent.id);
@@ -115,7 +114,7 @@ const Dogadjaji = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-  
+
         if (response.status === 201) {
           console.log('Novi događaj je uspešno dodat.');
           setDogadjaji([...dogadjaji, response.data.event]);
@@ -129,10 +128,11 @@ const Dogadjaji = () => {
     }
   };
   
-  function zatvoriModal(  ){
+  function zatvoriModal() {
     setShowModal(false);
     setSelectedEvent(null);
   }
+  
   const exportEvents = async () => {
     try {
       const token = sessionStorage.getItem('token');
@@ -167,10 +167,38 @@ const Dogadjaji = () => {
     }
   };
   
+  const handleEvidentirajPrisustvo = async (eventId) => {
+    try {
+      const token = sessionStorage.getItem('token');
+      if (!token) {
+        console.error('Nije pronađen token u sessionStorage-u.');
+        return;
+      }
+
+      const response = await axios.post('http://127.0.0.1:8000/api/pristustvo', {
+        event_id: eventId,
+        napomena: '', // Možete dodati opcioni komentar za prisustvo ako je potrebno
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.status === 201) {
+        console.log('Prisustvo je uspešno evidentirano.');
+        // Možete ažurirati stanje aplikacije kako biste oznacili događaj kao prisustvovan
+      } else {
+        console.error('Došlo je do greške prilikom evidentiranja prisustva.');
+      }
+    } catch (error) {
+      console.error('Došlo je do greške prilikom slanja POST zahteva za evidentiranje prisustva:', error);
+    }
+  };
+
   return (
     <>
       <div className="calendar">
-      <button onClick={exportEvents}>Izvezi događaje u .ics fajl</button>
+        <button onClick={exportEvents}>Izvezi događaje u .ics fajl</button>
 
         <div className="navigation">
           <button onClick={showPreviousWeek}>Prethodnih 7 dana</button>
@@ -217,6 +245,11 @@ const Dogadjaji = () => {
                               <button onClick={() => handleDeleteEvent(event.id)}>
                                 <BsTrash />
                               </button>
+                              {event.event_type.name === 'Nastava' && (
+                                <button onClick={() => handleEvidentirajPrisustvo(event.id)}>
+                                  Evidentiraj prisustvo
+                                </button>
+                              )}
                             </div>
                           ))}
                         </div>
